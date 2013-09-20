@@ -7,19 +7,59 @@ set -e
 set -u
 
 function usage() {
-  echo "$0 -n name -a -o output_path/" >&2
+  echo "$0 -n name -a -g -o output_path/" >&2
   echo >&2
   echo "-o   Path to store the downloaded configuration files" >&2
+  echo "-g   Treat output_path/ as a git repo and commit configuration files" >&2
   echo "-a   Create a tarball containing all the downloaded files" >&2
+}
+
+### this function initializes a directory to be a git repository if it
+### isn't already. the .gitignore file is also created.
+function git_init() {
+  # initialize the directory if it's not already
+  if [[ ! -d '.git' ]] ; then
+    git init > /dev/null
+    # ignore any tarball archives
+    echo '*.tar.gz' > .gitignore
+    # ignore daily config
+    echo '*/*_*_*-config' >> .gitignore
+
+    git_add_and_commit 'initial commit' .gitignore
+  fi
+
+  return 0
+}
+
+### this function is for adding new/changed files to the git tree and then
+### commiting those changes. it assumes the pwd is an existing git repo.
+### usage: git_add_and_commit "Commit msg" file1 file2 ... fileN
+function git_add_and_commit() {
+  local commit_msg="$1"
+  shift
+
+  for fname in "$@" ; do
+    # add all the new files
+    git add -f "$fname" > /dev/null || true
+  done
+
+  # commit changes
+  git commit \
+    --author="procurve-bup <$USER@$HOSTNAME>" \
+    --allow-empty-message \
+    --message="$commit_msg" > /dev/null || true
+
+  return 0
 }
 
 ### initialize our variables
 conf_file='./procurve-bup.conf'
 outdir=
 create_archive=
+do_git=
 
 ### fetch out cmdline options
-while getopts ":hac:o:" opt; do
+while getopts ":hagc:o:" opt; do
   case $opt in
     c)
       conf_file="$OPTARG"
@@ -29,6 +69,9 @@ while getopts ":hac:o:" opt; do
       ;;
     a)
       create_archive=1
+      ;;
+    a)
+      do_git=1
       ;;
     h)
       usage
@@ -60,6 +103,7 @@ conf_file="$(realpath $conf_file)"
 ### prepare the destination
 [[ ! -d "$outdir" ]] && mkdir -p $outdir
 cd $outdir
+[[ $do_git ]] && git_init
 
 ### grep the config file for all non-commented lines and pipe that
 ### to a 'read' to get the 3 colums of data we need
@@ -74,6 +118,7 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
   pushd "$name" > /dev/null
 
   ### fetch the configs
+  failed=0
   for cfg in startup-config running-config ; do
     echo "  +-> $cfg"
     # attempt the transfer using expect to input the password
@@ -88,16 +133,22 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
     # check the transfer was successful and link to the proper filenames
     if [[ -f "$tfname" ]] ; then
       chmod 440 "$tfname"
+      ln -f "$tfname" "${cfg}"
       mv -f "$tfname" "${name}_${now_day}_${cfg}"
     else
       echo "WARNING: Failed to retrieve $cfg from $name" >&2
+      failed=1
     fi
   done
 
-  ### see if the running-config is different to startup-config
-  sconf="${name}_${now_day}_startup-config"
-  rconf="${name}_${now_day}_running-config"
-  if [[ -f "$sconf" ]] && [[ -f "$rconf" ]] ; then
+  ### check if both files transferred successfully
+  sconf='startup-config'
+  rconf='running-config'
+  if [[ $failed -eq 0 ]] ; then
+    ### commit any changes to git if required
+    [[ $do_git ]] && git_add_and_commit "$name changes retrieved from $addr" "$sconf" "$rconf"
+
+    ### see if the running-config is different to startup-config
     if ! diff -q "$sconf" "$rconf" > /dev/null ; then
       echo "WARNING: running-config not saved:"
       diff -u "$sconf" "$rconf"
