@@ -98,7 +98,7 @@ done
 now_day=$(date +%a)     # eg, Sun, Mon, Tue
 now_month=$(date +%b)   # eg, Jan, Feb, Mar
 tfname=".switchbup-$$"  # temp filename for transfer to avoid blatting exiting backup with failed backup
-conf_file="$(realpath $conf_file)"
+conf_file="$(readlink -f $conf_file)"
 
 ### prepare the destination
 [[ ! -d "$outdir" ]] && mkdir -p $outdir
