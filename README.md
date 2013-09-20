@@ -64,9 +64,9 @@ was run on Friday 20th September 2013, and the `-a` flag was used:
     +-- floor2-switch
     |   +-- floor2-switch_Fri_running-config
     |   +-- floor2-switch_Fri_startup-config
-    |--- main-switch
-    |   +-- main-switch_Fri_running-config
-    |   +-- main-switch_Fri_startup-config
+    +-- main-switch
+    |   +-- main-switch_Fri_running-config
+    |   +-- main-switch_Fri_startup-config
 
 ### Comments
 
