@@ -3,6 +3,10 @@ procurve-bup
 
 Backup script to automatically backup configurations from multiple HP Procurve Switches
 
+Additionally, the script will compare the `running-config` against the
+`startup-config` and emit a warning if they are different (ie, the running
+configuration has not been saved).
+
 ## Usage
 
 Once you have a configuration file (see below):
