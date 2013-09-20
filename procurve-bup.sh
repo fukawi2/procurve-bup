@@ -82,7 +82,7 @@ while getopts ":hagc:o:" opt; do
     a)
       create_archive=1
       ;;
-    a)
+    g)
       do_git=1
       ;;
     h)
