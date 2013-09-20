@@ -13,15 +13,19 @@ function usage() {
 ### initialize our variables
 conf_file='./procurve-bup.conf'
 outdir=
+create_archive=
 
 ### fetch out cmdline options
-while getopts ":hc:o:" opt; do
+while getopts ":hac:o:" opt; do
   case $opt in
     c)
       conf_file="$OPTARG"
       ;;
     o)
       outdir="$OPTARG"
+      ;;
+    a)
+      create_archive=1
       ;;
     h)
       usage
@@ -101,5 +105,17 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
   # return to $outdir
   popd > /dev/null
 done
+
+### create a tarball archive?
+if [[ create_archive -eq 1 ]] ; then
+  archive_fname="procurve-configs-$(date +%Y%m%d).tar.gz"
+  echo "Creating archive $archive_fname"
+  tar --create \
+    --gzip \
+    --preserve-permissions \
+    --file "$archive_fname" \
+    */*_${now_day}_*-config
+  chmod 440 "$archive_fname"
+fi
 
 exit 0
