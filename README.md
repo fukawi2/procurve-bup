@@ -17,6 +17,11 @@ Once you have a configuration file (see below):
 Add the `-a` flag to have a tarball archive of all the retrieved configuration
 files created.
 
+Additionally, using the `-g` flag will cause the output path to be treated as
+a git repository and changes to config files will be automatically committed to
+the tree. If the directory is not already a git repository, it will be
+initialized as one (using `git init`) automatically.
+
 ## Configuration
 
 ### Switch Configuration
