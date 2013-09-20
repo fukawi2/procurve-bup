@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Copyright (c) 2013 Phillip Smith
+# See LICENSE file for licensing terms.
 
 set -e
 set -u
