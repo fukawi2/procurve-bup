@@ -4,10 +4,10 @@ set -e
 set -u
 
 function usage() {
-  echo "$0 -n name -a address -p password_file -o output_path/" >&2
+  echo "$0 -n name -a -o output_path/" >&2
   echo >&2
-  echo "password_file is a single line file containing the password to" >&2
-  echo "use to authenticate with the switch." >&2
+  echo "-o   Path to store the downloaded configuration files" >&2
+  echo "-a   Create a tarball containing all the downloaded files" >&2
 }
 
 ### initialize our variables
