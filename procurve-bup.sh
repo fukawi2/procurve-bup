@@ -63,6 +63,8 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
   [[ -z "$pw" ]]    && { echo "ERROR: no password for $name specified" >&2; exit 1; }
 
   echo "====> Backing up $name ($addr)"
+  [[ ! -d "$name" ]] && mkdir "$name"
+  pushd "$name" > /dev/null
 
   ### fetch the configs
   for cfg in startup-config running-config ; do
@@ -95,6 +97,9 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
       echo
     fi
   fi
+
+  # return to $outdir
+  popd > /dev/null
 done
 
 exit 0
