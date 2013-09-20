@@ -60,9 +60,9 @@ do_git=
 ### guess our config file name
 if [[ -f './procurve-bup.conf' ]] ; then
   conf_file='./procurve-bup.conf'
-elsif [[ -f '~/.procurve-bup.conf' ]] ; then
+elif [[ -f '~/.procurve-bup.conf' ]] ; then
   conf_file='~/.procurve-bup.conf'
-elsif [[ -f '/etc/procurve-bup.conf' ]] ; then
+elif [[ -f '/etc/procurve-bup.conf' ]] ; then
   conf_file='/etc/procurve-bup.conf'
 else
   # hopefully the user will tell us below; set our variable to something we
