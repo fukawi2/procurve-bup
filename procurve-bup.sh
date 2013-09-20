@@ -53,10 +53,22 @@ function git_add_and_commit() {
 }
 
 ### initialize our variables
-conf_file='./procurve-bup.conf'
 outdir=
 create_archive=
 do_git=
+
+### guess our config file name
+if [[ -f './procurve-bup.conf' ]] ; then
+  conf_file='./procurve-bup.conf'
+elsif [[ -f '~/.procurve-bup.conf' ]] ; then
+  conf_file='~/.procurve-bup.conf'
+elsif [[ -f '/etc/procurve-bup.conf' ]] ; then
+  conf_file='/etc/procurve-bup.conf'
+else
+  # hopefully the user will tell us below; set our variable to something we
+  # know does not exist to ensure error if the user doesn't tell us.
+  conf_file='./procurve-bup.conf'
+fi
 
 ### fetch out cmdline options
 while getopts ":hagc:o:" opt; do
