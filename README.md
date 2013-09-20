@@ -14,6 +14,14 @@ Once you have a configuration file (see below):
 
     procurve-bup -o /path/to/save/backups
 
+If you have you config file in a non-standard location, you can use the `-c`
+flag to tell the script where to find it's configuration file. Standard config
+locations are (in order they are checked):
+
+* ./procurve-bup.conf
+* ~/.procurve-bup.conf
+* /etc/procurve-bup.conf
+
 Add the `-a` flag to have a tarball archive of all the retrieved configuration
 files created.
 
