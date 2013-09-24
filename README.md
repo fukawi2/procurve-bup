@@ -65,7 +65,7 @@ line (whitespace delimited). Comments are supported (see below).
 
 This example will backup 3 switches called `main-switch`, `floor1-switch` and
 `floor2-switch`. An SSH connection will be made to the corresponding IP Address
-and authentication will be made as user `admin` with the resepective password.
+and authentication will be made as user `admin` with the respective password.
 
     main-switch     192.168.1.10  my_pa55w0rd
     floor1-switch   192.168.1.11  secret_pa55w0rd
