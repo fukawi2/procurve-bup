@@ -152,6 +152,9 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr user pw ; do
       echo "WARNING: Failed to retrieve $cfg from $name" >&2
       failed=1
     fi
+
+    # add a little sleep for slow switches that cna't keep up
+    sleep 3
   done
 
   ### check if both files transferred successfully
