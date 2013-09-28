@@ -52,24 +52,27 @@ tasks via SSH which is encrypted:
 A simple configuration file listing the details of the switches to be backed
 up powers the script.
 
-The configuration file is very simple; 1 line per switch with 3 columns per
+The configuration file is very simple; 1 line per switch with 4 columns per
 line (whitespace delimited). Comments are supported (see below).
 
 ### Format
 
 * Column 1: A 'friendly' name for the switch (no spaces)
 * Column 2: DNS host or IP Address of the switch
-* Column 3: Password for the 'admin' user
+* Column 3: Username to login to the switch with
+* Column 4: Password for the user in column 3
 
 ### Example
 
 This example will backup 3 switches called `main-switch`, `floor1-switch` and
 `floor2-switch`. An SSH connection will be made to the corresponding IP Address
-and authentication will be made as user `admin` with the respective password.
+and authentication will be made as user `manager` for the the switch named
+`main-switch` and user `admin` for the other 2 switches. The respective
+password in the forth column will be used for each connection:
 
-    main-switch     192.168.1.10  my_pa55w0rd
-    floor1-switch   192.168.1.11  secret_pa55w0rd
-    floor2-switch   192.168.1.12  d0nt_tellany1
+    main-switch     192.168.1.10  manager my_pa55w0rd
+    floor1-switch   192.168.1.11  admin   secret_pa55w0rd
+    floor2-switch   192.168.1.12  admin   d0nt_tellany1
 
 The resulting tree in the backup path will appear as below, assuming the script
 was run on Friday 20th September 2013, and the `-a` flag was used:

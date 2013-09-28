@@ -119,10 +119,11 @@ cd $outdir
 
 ### grep the config file for all non-commented lines and pipe that
 ### to a 'read' to get the 3 colums of data we need
-grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
+grep -P '^\s*[^#;]' $conf_file | while read name addr user pw ; do
   # got all the info we need?
   [[ -z "$name" ]]  && { echo "ERROR: no name specified" >&2; exit 1; }
   [[ -z "$addr" ]]  && { echo "ERROR: no address for $name specified" >&2; exit 1; }
+  [[ -z "$user" ]]    && { echo "ERROR: no username for $name specified" >&2; exit 1; }
   [[ -z "$pw" ]]    && { echo "ERROR: no password for $name specified" >&2; exit 1; }
 
   echo "====> Backing up $name ($addr)"
@@ -136,7 +137,7 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr pw ; do
     # attempt the transfer using expect to input the password
     expect -c "
       set timeout 30
-      spawn scp admin@$addr:/cfg/${cfg} \"$tfname\"
+      spawn scp ${user}@${addr}:/cfg/${cfg} \"$tfname\"
       expect \"password: \"
       send \"$pw\r\"
       expect eof
