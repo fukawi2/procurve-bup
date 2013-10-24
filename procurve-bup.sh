@@ -123,7 +123,7 @@ grep -P '^\s*[^#;]' $conf_file | while read name addr user pw ; do
   # got all the info we need?
   [[ -z "$name" ]]  && { echo "ERROR: no name specified" >&2; exit 1; }
   [[ -z "$addr" ]]  && { echo "ERROR: no address for $name specified" >&2; exit 1; }
-  [[ -z "$user" ]]    && { echo "ERROR: no username for $name specified" >&2; exit 1; }
+  [[ -z "$user" ]]  && { echo "ERROR: no username for $name specified" >&2; exit 1; }
   [[ -z "$pw" ]]    && { echo "ERROR: no password for $name specified" >&2; exit 1; }
 
   echo "====> Backing up $name ($addr)"
