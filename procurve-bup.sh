@@ -177,7 +177,7 @@ grep -P '^\s*[^#;]' "$conf_file" | while read name addr user pw ; do
 done
 
 ### create a tarball archive?
-if [[ create_archive -eq 1 ]] ; then
+if [[ $create_archive -eq 1 ]] ; then
   archive_fname="procurve-configs-$(date +%Y%m%d).tar.gz"
   echo "Creating archive $archive_fname"
   tar --create \
