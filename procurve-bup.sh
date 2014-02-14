@@ -113,13 +113,13 @@ tfname=".switchbup-$$"  # temp filename for transfer to avoid blatting exiting b
 conf_file="$(readlink -f $conf_file)"
 
 ### prepare the destination
-[[ ! -d "$outdir" ]] && mkdir -p $outdir
+[[ ! -d "$outdir" ]] && mkdir -p "$outdir"
 cd $outdir
 [[ $do_git ]] && git_init
 
 ### grep the config file for all non-commented lines and pipe that
 ### to a 'read' to get the 3 colums of data we need
-grep -P '^\s*[^#;]' $conf_file | while read name addr user pw ; do
+grep -P '^\s*[^#;]' "$conf_file" | while read name addr user pw ; do
   # got all the info we need?
   [[ -z "$name" ]]  && { echo "ERROR: no name specified" >&2; exit 1; }
   [[ -z "$addr" ]]  && { echo "ERROR: no address for $name specified" >&2; exit 1; }
