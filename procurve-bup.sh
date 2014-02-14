@@ -166,9 +166,9 @@ grep -P '^\s*[^#;]' "$conf_file" | while read name addr user pw ; do
 
     ### see if the running-config is different to startup-config
     if ! diff -q "$sconf" "$rconf" > /dev/null ; then
-      echo "WARNING: running-config not saved:"
-      diff -u "$sconf" "$rconf" || true
-      echo ''
+      echo "WARNING: running-config not saved:" >&2
+      diff -u "$sconf" "$rconf" || true >&2
+      echo '' >&2
     fi
   fi
 
