@@ -31,7 +31,7 @@ function log2syslog() {
     logger -it $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
   else
     # log the message to syslog and to stderr
-    logger -it $PROGNAME -p ${LOG_FACILITY}.${_priority} --stderr -- $_msg
+    logger -sit $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
   fi
 }
 function log_notice() {
