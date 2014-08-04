@@ -46,17 +46,17 @@ function log_err() {
 
 function guess_config_fname() {
   # try to guess our config file name
-  if [[ -f './procurve-bup.conf' ]] ; then
+  if [[ -e './procurve-bup.conf' ]] ; then
     echo './procurve-bup.conf'
     return 0
-  elif [[ -f '~/.procurve-bup.conf' ]] ; then
-    echo '~/.procurve-bup.conf'
+  elif [[ -e ~/.procurve-bup.conf ]] ; then
+    echo ~/.procurve-bup.conf
     return 0
-  elif [[ -f '/etc/procurve-bup.conf' ]] ; then
+  elif [[ -e '/etc/procurve-bup.conf' ]] ; then
     echo '/etc/procurve-bup.conf'
     return 0
   fi
-  return
+  return 1
 }
 
 function main() {
