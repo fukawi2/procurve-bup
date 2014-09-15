@@ -155,7 +155,7 @@ function main() {
       fi
 
       # add a little sleep for slow switches that cna't keep up
-      sleep 3
+      sleep 5
     done
 
     ### check if both files transferred successfully
