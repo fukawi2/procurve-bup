@@ -25,14 +25,16 @@ function log2syslog() {
   local _priority="$1"
   local _quiet="$2"
   local _msg="$3"
+  local _logger_args=
 
   if [[ "$_quiet" == 1 ]] ; then
     # just log to syslog
-    logger -it $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
+    _logger_args='it'
   else
     # log the message to syslog and to stderr
-    logger -sit $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
+    _logger_args='sit'
   fi
+  logger $_logger_args $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
 }
 function log_notice() {
   log2syslog "notice" "$quiet" "$1"
