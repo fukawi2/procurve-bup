@@ -11,7 +11,7 @@ readonly PROGNAME='procurve-bup'
 readonly LOG_FACILITY='user'
 
 ### global runtime variables
-quiet=
+declare quiet=
 
 function usage() {
   echo "$0 -n name -a -q -o output_path/" >&2
@@ -27,12 +27,12 @@ function log2syslog() {
   local _msg="$3"
   local _logger_args=
 
-  if [[ "$_quiet" == 1 ]] ; then
+  if [[ -n "$_quiet" ]] ; then
     # just log to syslog
-    _logger_args='it'
+    _logger_args='-it'
   else
     # log the message to syslog and to stderr
-    _logger_args='sit'
+    _logger_args='-sit'
   fi
   logger $_logger_args $PROGNAME -p ${LOG_FACILITY}.${_priority} -- $_msg
 }
