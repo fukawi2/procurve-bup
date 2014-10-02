@@ -135,7 +135,7 @@ function main() {
       log_notice "Fetching '$cfg' via SSH"
       # attempt the transfer using expect to input the password
       expect -c "
-        set timeout 30
+        set timeout 300
         spawn scp ${user}@${addr}:/cfg/${cfg} \"$_tfname\"
         expect \"password: \"
         send \"$pw\r\"
