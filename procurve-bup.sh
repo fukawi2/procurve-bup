@@ -14,8 +14,9 @@ readonly LOG_FACILITY='user'
 declare quiet=
 
 function usage() {
-  echo "$0 -n name -a -q -o output_path/" >&2
+  echo "$0 -c /path/file.conf -a -q -o output_path/" >&2
   echo >&2
+  echo "-c   Path to configuration file" >&2
   echo "-o   Path to store the downloaded configuration files" >&2
   echo "-a   Create a tarball containing all the downloaded files" >&2
   echo "-q   Be quiet" >&2
