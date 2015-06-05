@@ -42,6 +42,12 @@ following commands after entering config mode:
     ip ssh
     ip ssh filetransfer
 
+If you want to use public key authentication, and your switch supports it, you
+need to give the switch your PUBLIC key:
+
+    ip ssh public-key manager "ssh-rsa AAAAB3N....."
+    aaa authentication ssh enable public-key
+
 Optionally, you can then disable the telnet server and perform administration
 tasks via SSH which is encrypted:
 
@@ -60,7 +66,9 @@ line (whitespace delimited). Comments are supported (see below).
 * Column 1: A 'friendly' name for the switch (no spaces)
 * Column 2: DNS host or IP Address of the switch
 * Column 3: Username to login to the switch with
-* Column 4: Password for the user in column 3
+* Column 4: Method to login with: password or pubkey
+* Column 5: If method=password, then password to login to the switch with
+            If method=pubkey, then the path to private key to login with
 
 ### Example
 
@@ -70,9 +78,9 @@ and authentication will be made as user `manager` for the the switch named
 `main-switch` and user `admin` for the other 2 switches. The respective
 password in the forth column will be used for each connection:
 
-    main-switch     192.168.1.10  manager my_pa55w0rd
-    floor1-switch   192.168.1.11  admin   secret_pa55w0rd
-    floor2-switch   192.168.1.12  admin   d0nt_tellany1
+    main-switch     192.168.1.10  manager password  my_pa55w0rd
+    floor1-switch   192.168.1.11  admin   password  secret_pa55w0rd
+    floor2-switch   192.168.1.12  admin   password  d0nt_tellany1
 
 The resulting tree in the backup path will appear as below, assuming the script
 was run on Friday 20th September 2013, and the `-a` flag was used:
@@ -85,9 +93,9 @@ was run on Friday 20th September 2013, and the `-a` flag was used:
     +-- floor2-switch
     |   +-- floor2-switch_Fri_running-config
     |   +-- floor2-switch_Fri_startup-config
-    +-- main-switch
-    |   +-- main-switch_Fri_running-config
-    |   +-- main-switch_Fri_startup-config
+    \-- main-switch
+        +-- main-switch_Fri_running-config
+        +-- main-switch_Fri_startup-config
 
 ### Comments
 

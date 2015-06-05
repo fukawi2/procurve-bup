@@ -62,6 +62,42 @@ function guess_config_fname() {
   return 1
 }
 
+function scp_using_password() {
+  local ssh_uri="$1"
+  local password="$2"
+  local remote_file="$3"
+  local local_file="$4"
+
+  local _ssh_opts='-q -o PubkeyAuthentication=no -o PasswordAuthentication=yes'
+  local _tfile="$(mktemp)"
+  chmod 600 "$_tfile"
+  echo "$password" > "$_tfile"
+
+  failed=0
+  sshpass -f $_tfile \
+    scp $_ssh_opts \
+    ${ssh_uri}:${remote_file} \
+    "$local_file" || failed=1
+  rm -f "$_tfile"
+  return $failed
+}
+
+function scp_using_pubkey() {
+  local ssh_uri="$1"
+  local pubkey_file="$2"
+  local remote_file="$3"
+  local local_file="$4"
+
+  local _ssh_opts='-q -o PubkeyAuthentication=yes -o PasswordAuthentication=no'
+
+  failed=0
+  scp $_ssh_opts \
+    -i "$pubkey_file" \
+    ${ssh_uri}:${remote_file} \
+    "$local_file" || failed=1
+  return $failed
+}
+
 function main() {
   ### runtime variables
   local _outdir=
@@ -119,12 +155,28 @@ function main() {
 
   ### grep the config file for all non-commented lines and pipe that
   ### to a 'read' to get the 3 colums of data we need
-  grep -P '^\s*[^#;]' "$_config_fname" | while read name addr user pw ; do
+  grep -P '^\s*[^#;]' "$_config_fname" | while read name addr user method value ; do
     # got all the info we need?
-    [[ -z "$name" ]]  && { log_err "ERROR: no name specified" >&2; exit 1; }
-    [[ -z "$addr" ]]  && { log_err "ERROR: no address for $name specified" >&2; exit 1; }
-    [[ -z "$user" ]]  && { log_err "ERROR: no username for $name specified" >&2; exit 1; }
-    [[ -z "$pw" ]]    && { log_err "ERROR: no password for $name specified" >&2; exit 1; }
+    [[ -z "$name" ]]  && { log_err "ERROR: no name specified"; exit 1; }
+    [[ -z "$addr" ]]  && { log_err "ERROR: no address for $name specified"; exit 1; }
+    [[ -z "$user" ]]  && { log_err "ERROR: no username for $name specified"; exit 1; }
+    [[ -z "$method" ]]&& { log_err "ERROR: no method for $name specified"; exit 1; }
+    case "$method" in
+      'password')
+        pw="$value"
+        pubkey=''
+        [[ -z "$pw" ]] && { log_err "ERROR: no password for $name specified"; exit 1; }
+        ;;
+      'pubkey')
+        pw=''
+        pubkey="$value"
+        [[ -z "$pubkey" ]] && { log_err "ERROR: no public key for $name specified"; exit 1; }
+        ;;
+      *)
+        log_err "ERROR: unknown method for $name: $method"
+        exit 1;
+        ;;
+    esac
 
     log_notice "Backing up $name ($addr)"
     [[ ! -d "$name" ]] && mkdir "$name"
@@ -133,15 +185,16 @@ function main() {
     ### fetch the configs
     failed=0
     for cfg in startup-config running-config ; do
-      log_notice "Fetching '$cfg' via SSH"
-      # attempt the transfer using expect to input the password
-      expect -c "
-        set timeout 300
-        spawn scp ${user}@${addr}:/cfg/${cfg} \"$_tfname\"
-        expect \"password: \"
-        send \"$pw\r\"
-        expect eof
-      " > /dev/null
+      case "$method" in
+        'password')
+          log_notice "Fetching '$cfg' via SSH using password auth"
+          scp_using_password "${user}@${addr}" "$pw" "/cfg/${cfg}" "$_tfname" || continue
+          ;;
+        'pubkey')
+          log_notice "Fetching '$cfg' via SSH using public key auth"
+          scp_using_pubkey "${user}@${addr}" "$pubkey" "/cfg/${cfg}" "$_tfname" || continue
+          ;;
+      esac
 
       # check the transfer was successful and link to the proper filenames
       if [[ -f "$_tfname" ]] ; then
