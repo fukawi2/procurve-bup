@@ -105,6 +105,14 @@ function main() {
   local _now_day=$(date +%a)     # eg, Sun, Mon, Tue
   local _tfname=".switchbup-$$"  # temp filename for transfer to avoid blatting exiting backup with failed backup
 
+  ### check for external dependencies
+  for cmd in sshpass readlink scp rm chmod logger mkdir grep ln mv diff tar ; do
+    if [[ -z "$(command -v $cmd)" ]] ; then
+      echo "ERROR: Missing external command '$cmd'" >&2
+      exit 2
+    fi
+  done
+
   local _config_fname=$(guess_config_fname)
 
   ### fetch out cmdline options
