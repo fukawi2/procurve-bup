@@ -240,7 +240,7 @@ function main() {
       --gzip \
       --preserve-permissions \
       --file "$_archive_fname" \
-      */*_${now_day}_*-config
+      */*_${_now_day}_*-config
     chmod 440 "$_archive_fname"
   fi
 
