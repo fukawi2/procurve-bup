@@ -135,3 +135,4 @@ This script has been tested as working with the following switch models:
 * HP Procurve 2530-24G (`J9776A`)
 * HP Procurve 2620-24-PoE+ (`J9625A`)
 * HP Procurve 2920-24G (`J9726A`)
+* HP Procurve 2910-48G-PoE (`J9147A`)
